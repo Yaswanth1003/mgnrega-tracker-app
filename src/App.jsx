@@ -6,6 +6,7 @@ import DistrictSelector from "./components/DistrictSelector";
 import PerformanceCard from "./components/PerformanceCard";
 import TrendChart from "./components/TrendChart";
 import Footer from "./components/Footer";
+import LocationDetector from "./components/LocationDetector";
 import {
   loadCSVData,
   getStates,
@@ -228,6 +229,33 @@ function App() {
         ))}
       </div>
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
+        <LocationDetector
+          onLocationDetected={(location) => {
+            const stateMatch = states.find(
+              (s) =>
+                s.toUpperCase().includes(location.state.toUpperCase()) ||
+                location.state.toUpperCase().includes(s.toUpperCase())
+            );
+
+            if (stateMatch) {
+              setSelectedState(stateMatch);
+
+              setTimeout(() => {
+                const districtList = getDistricts(allData, stateMatch);
+                const districtMatch = districtList.find(
+                  (d) =>
+                    d.toUpperCase().includes(location.district.toUpperCase()) ||
+                    location.district.toUpperCase().includes(d.toUpperCase())
+                );
+
+                if (districtMatch) {
+                  setSelectedDistrict(districtMatch);
+                }
+              }, 500);
+            }
+          }}
+        />
+
         <StateSelector
           states={states}
           selectedState={selectedState}

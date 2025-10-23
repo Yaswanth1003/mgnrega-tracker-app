@@ -8,8 +8,9 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import Translations from "./Translations";
 
-const TrendChart = ({ data, dataKey, title, color }) => {
+const TrendChart = ({ data, dataKey, titleKey, color, lang = "en" }) => {
   const chartData = data.map((row) => ({
     month: row.month,
     value: Number(row[dataKey]) || 0,
@@ -19,25 +20,26 @@ const TrendChart = ({ data, dataKey, title, color }) => {
     <div
       style={{
         backgroundColor: "white",
-        padding: "30px",
-        borderRadius: "20px",
-        boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
-        marginTop: "25px",
+        padding: "35px",
+        borderRadius: "22px",
+        boxShadow: "0 12px 28px rgba(0,0,0,0.15)",
+        marginTop: "30px",
         border: `3px solid ${color}20`,
+        fontFamily: "'Poppins', sans-serif",
       }}
     >
       <h3
         style={{
-          fontSize: "24px",
-          marginBottom: "25px",
-          color: "#333",
-          fontWeight: "bold",
+          fontSize: "26px",
+          marginBottom: "28px",
+          color: "#111827",
+          fontWeight: "700",
           display: "flex",
           alignItems: "center",
-          gap: "10px",
+          gap: "12px",
         }}
       >
-        {title}
+        {Translations[lang]?.[titleKey] || titleKey}
       </h3>
 
       <ResponsiveContainer width="100%" height={350}>
@@ -48,11 +50,11 @@ const TrendChart = ({ data, dataKey, title, color }) => {
           <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
           <XAxis
             dataKey="month"
-            style={{ fontSize: "16px", fontWeight: "bold" }}
+            style={{ fontSize: "16px", fontWeight: "600" }}
             stroke="#666"
           />
           <YAxis
-            style={{ fontSize: "16px", fontWeight: "bold" }}
+            style={{ fontSize: "16px", fontWeight: "600" }}
             stroke="#666"
           />
           <Tooltip

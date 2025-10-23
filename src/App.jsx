@@ -422,14 +422,16 @@ function App() {
             <TrendChart
               data={trendData}
               dataKey="Total_Individuals_Worked"
-              title="👥 Workers Trend (Last 6 Months)"
+              titleKey="workers_trend"
               color="#10b981"
+              lang={lang}
             />
             <TrendChart
               data={trendData}
               dataKey="Total_No_of_Works_Takenup"
-              title="🏗️ Works Taken Up (Last 6 Months)"
+              titleKey="works_trend"
               color="#3b82f6"
+              lang={lang}
             />
           </div>
         )}

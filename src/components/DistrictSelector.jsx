@@ -1,10 +1,12 @@
 import React from "react";
 import { MapPin } from "lucide-react";
+import Translations from "./Translations";
 
 const DistrictSelector = ({
   districts,
   selectedDistrict,
   onSelectDistrict,
+  lang,
 }) => {
   return (
     <div
@@ -31,7 +33,7 @@ const DistrictSelector = ({
         }}
       >
         <MapPin size={28} color="#0D9488" />
-        Select Your District
+        {Translations[lang]?.select_your_district || "Select Your District"}
       </h2>
 
       <select
@@ -50,14 +52,10 @@ const DistrictSelector = ({
           transition: "all 0.2s ease",
           color: "#111827",
         }}
-        onFocus={(e) =>
-          (e.target.style.boxShadow = "0 4px 16px rgba(0,0,0,0.12)")
-        }
-        onBlur={(e) =>
-          (e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)")
-        }
       >
-        <option value="">-- Choose District --</option>
+        <option value="">
+          {Translations[lang]?.choose_district || "-- Choose District --"}
+        </option>
         {districts.map((district) => (
           <option key={district} value={district}>
             {district}

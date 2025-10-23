@@ -1,7 +1,8 @@
 import React from "react";
 import { MapPin } from "lucide-react";
+import Translations from "./Translations";
 
-const StateSelector = ({ states, selectedState, onSelectState }) => {
+const StateSelector = ({ states, selectedState, onSelectState, lang }) => {
   return (
     <div
       style={{
@@ -27,7 +28,7 @@ const StateSelector = ({ states, selectedState, onSelectState }) => {
         }}
       >
         <MapPin size={28} color="#0D9488" />
-        Select Your State
+        {Translations[lang]?.select_your_state || "Select Your State"}
       </h2>
 
       <select
@@ -46,14 +47,10 @@ const StateSelector = ({ states, selectedState, onSelectState }) => {
           transition: "all 0.2s ease",
           color: "#111827",
         }}
-        onFocus={(e) =>
-          (e.target.style.boxShadow = "0 4px 16px rgba(0,0,0,0.12)")
-        }
-        onBlur={(e) =>
-          (e.target.style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)")
-        }
       >
-        <option value="">-- Choose State --</option>
+        <option value="">
+          {Translations[lang]?.choose_state || "-- Choose State --"}
+        </option>
         {states.map((state) => (
           <option key={state} value={state}>
             {state}

@@ -1,7 +1,8 @@
 import React from "react";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import Translations from "../components/Translations"; // adjust path if needed
 
-const PerformanceIndicator = ({ current, previous }) => {
+const PerformanceIndicator = ({ current, previous, lang = "en" }) => {
   if (current == null || previous == null) return null;
 
   const change = ((current - previous) / previous) * 100;
@@ -20,7 +21,7 @@ const PerformanceIndicator = ({ current, previous }) => {
         marginTop: "10px",
         padding: "8px 12px",
         borderRadius: "12px",
-        backgroundColor: `${color}20`, // light transparent background
+        backgroundColor: `${color}20`,
         width: "fit-content",
       }}
     >
@@ -29,7 +30,9 @@ const PerformanceIndicator = ({ current, previous }) => {
         {isPositive ? "+" : ""}
         {change.toFixed(1)}%
       </span>
-      <span style={{ fontSize: "14px", color: "#6b7280" }}>vs last month</span>
+      <span style={{ fontSize: "14px", color: "#6b7280" }}>
+        {Translations[lang]?.vs_last_month || "vs last month"}
+      </span>
     </div>
   );
 };

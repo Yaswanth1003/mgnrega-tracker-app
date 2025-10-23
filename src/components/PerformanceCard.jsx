@@ -1,6 +1,14 @@
 import React from "react";
+import Translations from "../components/Translations"; // adjust path if needed
 
-const PerformanceCard = ({ icon: Icon, title, value, color, subtitle }) => {
+const PerformanceCard = ({
+  icon: Icon,
+  title,
+  value,
+  color,
+  subtitle,
+  lang = "en",
+}) => {
   return (
     <div
       style={{
@@ -54,7 +62,7 @@ const PerformanceCard = ({ icon: Icon, title, value, color, subtitle }) => {
             fontWeight: "700",
           }}
         >
-          {title}
+          {Translations[lang][title] || title}
         </h3>
       </div>
 
@@ -80,7 +88,7 @@ const PerformanceCard = ({ icon: Icon, title, value, color, subtitle }) => {
             fontWeight: "500",
           }}
         >
-          {subtitle}
+          {Translations[lang][subtitle] || subtitle}
         </div>
       )}
     </div>

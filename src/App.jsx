@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Users, Briefcase, TrendingUp, Calendar } from "lucide-react";
+import {
+  Users,
+  Briefcase,
+  TrendingUp,
+  Calendar,
+  BarChart3,
+  LogIn,
+  UserPlus,
+} from "lucide-react";
+import LocationDetector from "./components/LocationDetector";
 import PerformanceIndicator from "./components/PerformanceIndicator";
 import StateSelector from "./components/StateSelector";
 import DistrictSelector from "./components/DistrictSelector";
 import PerformanceCard from "./components/PerformanceCard";
 import TrendChart from "./components/TrendChart";
 import Footer from "./components/Footer";
-import LocationDetector from "./components/LocationDetector";
+import Translations from "./components/Translations";
 import {
   loadCSVData,
   getStates,
@@ -19,7 +28,6 @@ import {
   getTrendData,
   formatNumber,
 } from "./utils/dataProcessor";
-import { BarChart3, LogIn, UserPlus } from "lucide-react";
 
 function App() {
   const [districtLoading, setDistrictLoading] = useState(false);
@@ -30,6 +38,7 @@ function App() {
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [districtData, setDistrictData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lang, setLang] = useState("en"); // default language
 
   useEffect(() => {
     const loadData = async () => {
@@ -76,6 +85,7 @@ function App() {
         minHeight: "100vh",
       }}
     >
+      {/* Navbar */}
       <nav
         style={{
           display: "flex",
@@ -101,7 +111,35 @@ function App() {
           }}
         >
           <BarChart3 size={26} color="#00e6b8" />
-          MGNREGA Dashboard
+          {Translations[lang]?.dashboard_title || "MGNREGA Dashboard"}
+        </div>
+
+        {/* Language Switcher */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <label
+            htmlFor="langSelect"
+            style={{ color: "#00e6b8", fontWeight: 600 }}
+          >
+            {Translations[lang]?.language_label || "Language"}:
+          </label>
+          <select
+            id="langSelect"
+            value={lang}
+            onChange={(e) => setLang(e.target.value)}
+            style={{
+              padding: "6px 10px",
+              borderRadius: "6px",
+              border: "1.5px solid #00e6b8",
+              backgroundColor: "#0a0a0a",
+              color: "#f0f0f0",
+              fontWeight: "600",
+              cursor: "pointer",
+            }}
+          >
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+            <option value="te">తెలుగు</option>
+          </select>
         </div>
 
         <div style={{ display: "flex", gap: "15px" }}>
@@ -119,15 +157,9 @@ function App() {
               cursor: "pointer",
               transition: "0.3s",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#00e6b820")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "transparent")
-            }
           >
             <LogIn size={18} />
-            Login
+            {Translations[lang]?.login || "Login"}
           </button>
 
           <button
@@ -144,18 +176,14 @@ function App() {
               cursor: "pointer",
               transition: "0.3s",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#00cba3")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#00e6b8")
-            }
           >
             <UserPlus size={18} />
-            Sign Up
+            {Translations[lang]?.signup || "Sign Up"}
           </button>
         </div>
       </nav>
+
+      {/* Header */}
       <header
         style={{
           background: "linear-gradient(90deg, #00e6b8, #0072ff)",
@@ -166,12 +194,15 @@ function App() {
         }}
       >
         <h1 style={{ margin: 0, fontSize: "42px", fontWeight: "700" }}>
-          Welcome to MGNREGA Tracker
+          {Translations[lang]?.welcome_msg || "Welcome to MGNREGA Tracker"}
         </h1>
         <p style={{ marginTop: "12px", fontSize: "18px", opacity: 0.9 }}>
-          Explore real-time employment and development data across India
+          {Translations[lang]?.explore_data ||
+            "Explore real-time employment and development data across India"}
         </p>
       </header>
+
+      {/* Cards */}
       <div
         style={{
           display: "flex",
@@ -183,22 +214,22 @@ function App() {
       >
         {[
           {
-            title: "Real-time Data",
+            title: "real_time_data",
             icon: "📊",
             color: "#00e6b8",
-            desc: "Access the latest district-wise data and insights.",
+            desc: "access_latest_data",
           },
           {
-            title: "Trend Analysis",
+            title: "trend_analysis",
             icon: "📈",
             color: "#3b82f6",
-            desc: "Visualize worker, project, and wage trends clearly.",
+            desc: "visualize_trends",
           },
           {
-            title: "Project Insights",
+            title: "project_insights",
             icon: "🏗️",
             color: "#f59e0b",
-            desc: "Track projects completed and ongoing efficiently.",
+            desc: "track_projects",
           },
         ].map((card, i) => (
           <div
@@ -222,37 +253,25 @@ function App() {
             }}
           >
             <h3 style={{ color: card.color, fontSize: "22px" }}>
-              {card.icon} {card.title}
+              {card.icon} {Translations[lang]?.[card.title] || card.title}
             </h3>
-            <p style={{ color: "#ccc", marginTop: "10px" }}>{card.desc}</p>
+            <p style={{ color: "#ccc", marginTop: "10px" }}>
+              {Translations[lang]?.[card.desc] || card.desc}
+            </p>
           </div>
         ))}
       </div>
+
+      {/* Main Dashboard */}
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
+        {/* Location Detector */}
         <LocationDetector
+          lang={lang}
           onLocationDetected={(location) => {
-            const stateMatch = states.find(
-              (s) =>
-                s.toUpperCase().includes(location.state.toUpperCase()) ||
-                location.state.toUpperCase().includes(s.toUpperCase())
+            const stateMatch = states.find((s) =>
+              s.toUpperCase().includes(location.state.toUpperCase())
             );
-
-            if (stateMatch) {
-              setSelectedState(stateMatch);
-
-              setTimeout(() => {
-                const districtList = getDistricts(allData, stateMatch);
-                const districtMatch = districtList.find(
-                  (d) =>
-                    d.toUpperCase().includes(location.district.toUpperCase()) ||
-                    location.district.toUpperCase().includes(d.toUpperCase())
-                );
-
-                if (districtMatch) {
-                  setSelectedDistrict(districtMatch);
-                }
-              }, 500);
-            }
+            if (stateMatch) setSelectedState(stateMatch);
           }}
         />
 
@@ -260,16 +279,16 @@ function App() {
           states={states}
           selectedState={selectedState}
           onSelectState={setSelectedState}
+          lang={lang}
         />
 
         {selectedState && (
-          <div style={{ marginTop: "20px" }}>
-            <DistrictSelector
-              districts={districts}
-              selectedDistrict={selectedDistrict}
-              onSelectDistrict={setSelectedDistrict}
-            />
-          </div>
+          <DistrictSelector
+            districts={districts}
+            selectedDistrict={selectedDistrict}
+            onSelectDistrict={setSelectedDistrict}
+            lang={lang}
+          />
         )}
 
         {districtLoading && (
@@ -287,7 +306,8 @@ function App() {
             }}
           >
             <div style={{ fontSize: "48px", marginBottom: "10px" }}>⏳</div>
-            Fetching your district data...
+            {Translations[lang]?.fetching_data ||
+              "Fetching your district data..."}
           </div>
         )}
 
@@ -306,7 +326,8 @@ function App() {
                 📊 {selectedDistrict}, {selectedState}
               </h2>
               <p style={{ color: "#aaa" }}>
-                Data for {latestData.month} {latestData.fin_year}
+                {Translations[lang]?.data_for || "Data for"} {latestData.month}{" "}
+                {latestData.fin_year}
               </p>
             </div>
 
@@ -320,15 +341,17 @@ function App() {
               <div>
                 <PerformanceCard
                   icon={Users}
-                  title="Total Workers"
+                  title="total_workers"
                   value={formatNumber(latestData.Total_Individuals_Worked)}
                   color="#10b981"
-                  subtitle="People employed"
+                  subtitle="people_employed"
+                  lang={lang}
                 />
                 {previousData && (
                   <PerformanceIndicator
                     current={latestData.Total_Individuals_Worked}
                     previous={previousData.Total_Individuals_Worked}
+                    lang={lang}
                   />
                 )}
               </div>
@@ -336,15 +359,17 @@ function App() {
               <div>
                 <PerformanceCard
                   icon={Briefcase}
-                  title="Total Works"
+                  title="total_works"
                   value={latestData.Total_No_of_Works_Takenup}
                   color="#3b82f6"
-                  subtitle="Projects taken up"
+                  subtitle="projects_taken_up"
+                  lang={lang}
                 />
                 {previousData && (
                   <PerformanceIndicator
                     current={latestData.Total_No_of_Works_Takenup}
                     previous={previousData.Total_No_of_Works_Takenup}
+                    lang={lang}
                   />
                 )}
               </div>
@@ -352,17 +377,19 @@ function App() {
               <div>
                 <PerformanceCard
                   icon={TrendingUp}
-                  title="Average Wage"
+                  title="average_wage"
                   value={`₹${Math.round(
                     latestData.Average_Wage_rate_per_day_per_person
                   )}`}
                   color="#f59e0b"
-                  subtitle="Per day per person"
+                  subtitle="per_day_per_person"
+                  lang={lang}
                 />
                 {previousData && (
                   <PerformanceIndicator
                     current={latestData.Average_Wage_rate_per_day_per_person}
                     previous={previousData.Average_Wage_rate_per_day_per_person}
+                    lang={lang}
                   />
                 )}
               </div>
@@ -370,12 +397,13 @@ function App() {
               <div>
                 <PerformanceCard
                   icon={Calendar}
-                  title="Avg Days/Household"
+                  title="avg_days_household"
                   value={Math.round(
                     latestData.Average_days_of_employment_provided_per_Household
                   )}
                   color="#8b5cf6"
-                  subtitle="Employment provided"
+                  subtitle="employment_provided"
+                  lang={lang}
                 />
                 {previousData && (
                   <PerformanceIndicator
@@ -385,6 +413,7 @@ function App() {
                     previous={
                       previousData.Average_days_of_employment_provided_per_Household
                     }
+                    lang={lang}
                   />
                 )}
               </div>
@@ -405,7 +434,8 @@ function App() {
           </div>
         )}
       </div>
-      <Footer />;
+
+      <Footer />
     </div>
   );
 }

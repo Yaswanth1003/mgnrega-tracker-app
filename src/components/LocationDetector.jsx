@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import Translations from "../components/Translations"; // adjust path if needed
 
-const LocationDetector = ({ onLocationDetected }) => {
+const LocationDetector = ({ onLocationDetected, lang = "en" }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -9,7 +10,10 @@ const LocationDetector = ({ onLocationDetected }) => {
     setError("");
 
     if (!navigator.geolocation) {
-      setError("Location not supported by your browser");
+      setError(
+        Translations[lang]["location_not_supported"] ||
+          "Location not supported by your browser"
+      );
       setLoading(false);
       return;
     }
@@ -20,12 +24,26 @@ const LocationDetector = ({ onLocationDetected }) => {
 
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+            {
+              headers: {
+                "User-Agent": "mgnrega-tracker-app/1.0 (yaswanth@example.com)",
+              },
+            }
           );
-          const data = await response.json();
 
-          const state = data.address.state;
-          const district = data.address.state_district || data.address.county;
+          const data = await response.json();
+          const state =
+            data.address.state ||
+            data.address.region ||
+            data.address.state_name;
+
+          const district =
+            data.address.state_district ||
+            data.address.county ||
+            data.address.suburb ||
+            data.address.city_district ||
+            data.address.city;
 
           if (state && district) {
             onLocationDetected({
@@ -33,16 +51,24 @@ const LocationDetector = ({ onLocationDetected }) => {
               district: district.toUpperCase(),
             });
           } else {
-            setError("Could not detect your location");
+            setError(
+              Translations[lang]["location_not_accurate"] ||
+                "Could not detect your location accurately"
+            );
           }
         } catch (err) {
-          setError("Failed to detect location");
+          setError(
+            Translations[lang]["location_failed"] || "Failed to detect location"
+          );
         }
 
         setLoading(false);
       },
       () => {
-        setError("Please allow location access in your browser");
+        setError(
+          Translations[lang]["location_permission"] ||
+            "Please allow location access in your browser"
+        );
         setLoading(false);
       }
     );
@@ -75,7 +101,11 @@ const LocationDetector = ({ onLocationDetected }) => {
           maxWidth: "400px",
         }}
       >
-        {loading ? "🔄 Detecting Location..." : "📍 Auto-Detect My Location"}
+        {loading
+          ? Translations[lang]["detecting_location"] ||
+            "🔄 Detecting Location..."
+          : Translations[lang]["auto_detect_state"] ||
+            "📍 Auto-Detect My State"}
       </button>
 
       {error && (

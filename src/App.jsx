@@ -38,7 +38,7 @@ function App() {
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [districtData, setDistrictData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [lang, setLang] = useState("en"); // default language
+  const [lang, setLang] = useState("en");
 
   useEffect(() => {
     const loadData = async () => {
@@ -85,80 +85,90 @@ function App() {
         minHeight: "100vh",
       }}
     >
-      {/* Navbar */}
       <nav
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "18px 40px",
+          padding: "10px 14px",
           background: "rgba(255, 255, 255, 0.05)",
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
           backdropFilter: "blur(8px)",
           position: "sticky",
           top: 0,
           zIndex: 100,
+          flexWrap: "nowrap",
         }}
       >
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "10px",
-            fontSize: "22px",
+            gap: "8px",
+            fontSize: "18px",
             fontWeight: "bold",
             color: "#00e6b8",
+            flexShrink: 0,
           }}
         >
-          <BarChart3 size={26} color="#00e6b8" />
-          {Translations[lang]?.dashboard_title || "MGNREGA Dashboard"}
+          <BarChart3 size={22} color="#00e6b8" />
+          <span className="nav-title">
+            {Translations[lang]?.dashboard_title || "MGNREGA Dashboard"}
+          </span>
         </div>
 
-        {/* Language Switcher */}
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <label
-            htmlFor="langSelect"
-            style={{ color: "#00e6b8", fontWeight: 600 }}
-          >
-            {Translations[lang]?.language_label || "Language"}:
-          </label>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+        >
           <select
             id="langSelect"
             value={lang}
             onChange={(e) => setLang(e.target.value)}
             style={{
-              padding: "6px 10px",
+              padding: "4px 8px",
               borderRadius: "6px",
-              border: "1.5px solid #00e6b8",
+              border: "1.2px solid #00e6b8",
               backgroundColor: "#0a0a0a",
               color: "#f0f0f0",
               fontWeight: "600",
               cursor: "pointer",
+              fontSize: "13px",
             }}
           >
-            <option value="en">English</option>
-            <option value="hi">हिंदी</option>
-            <option value="te">తెలుగు</option>
+            <option value="en">EN</option>
+            <option value="hi">हि</option>
+            <option value="te">తె</option>
           </select>
         </div>
 
-        <div style={{ display: "flex", gap: "15px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            flexShrink: 0,
+          }}
+        >
           <button
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "6px",
+              gap: "4px",
               background: "transparent",
-              border: "1.5px solid #00e6b8",
+              border: "1.2px solid #00e6b8",
               color: "#00e6b8",
-              padding: "10px 18px",
-              borderRadius: "8px",
+              padding: "5px 10px",
+              borderRadius: "6px",
               fontWeight: "600",
               cursor: "pointer",
-              transition: "0.3s",
+              fontSize: "13px",
             }}
           >
-            <LogIn size={18} />
+            <LogIn size={14} />
             {Translations[lang]?.login || "Login"}
           </button>
 
@@ -166,24 +176,33 @@ function App() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "6px",
+              gap: "4px",
               background: "#00e6b8",
               color: "#000",
               border: "none",
-              padding: "10px 18px",
-              borderRadius: "8px",
+              padding: "5px 10px",
+              borderRadius: "6px",
               fontWeight: "600",
               cursor: "pointer",
-              transition: "0.3s",
+              fontSize: "13px",
             }}
           >
-            <UserPlus size={18} />
+            <UserPlus size={14} />
             {Translations[lang]?.signup || "Sign Up"}
           </button>
         </div>
+
+        <style>
+          {`
+            @media (max-width: 640px) {
+              .nav-title {
+                display: none;
+              }
+            }
+          `}
+        </style>
       </nav>
 
-      {/* Header */}
       <header
         style={{
           background: "linear-gradient(90deg, #00e6b8, #0072ff)",
@@ -202,7 +221,6 @@ function App() {
         </p>
       </header>
 
-      {/* Cards */}
       <div
         style={{
           display: "flex",
@@ -262,16 +280,58 @@ function App() {
         ))}
       </div>
 
-      {/* Main Dashboard */}
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
-        {/* Location Detector */}
         <LocationDetector
           lang={lang}
           onLocationDetected={(location) => {
-            const stateMatch = states.find((s) =>
-              s.toUpperCase().includes(location.state.toUpperCase())
+            console.log("Detected location:", location);
+
+            const stateMatch = states.find(
+              (s) => s.toUpperCase() === location.state.toUpperCase()
             );
-            if (stateMatch) setSelectedState(stateMatch);
+
+            console.log("State match:", stateMatch);
+
+            if (stateMatch) {
+              setSelectedState(stateMatch);
+
+              setTimeout(() => {
+                const districtList = getDistricts(allData, stateMatch);
+                console.log("Available districts:", districtList);
+                console.log("Looking for:", location.district);
+
+                const districtMatch = districtList.find((d) => {
+                  const d1 = d.toUpperCase().replace(/\s+/g, "");
+                  const d2 = location.district
+                    .toUpperCase()
+                    .replace(/\s+/g, "");
+
+                  if (d1 === d2) return true;
+
+                  if (Math.abs(d1.length - d2.length) <= 2) {
+                    let matches = 0;
+                    const shorter = d1.length < d2.length ? d1 : d2;
+                    const longer = d1.length >= d2.length ? d1 : d2;
+
+                    for (let i = 0; i < shorter.length; i++) {
+                      if (longer[i] === shorter[i]) matches++;
+                    }
+
+                    return matches >= shorter.length - 1;
+                  }
+
+                  return false;
+                });
+
+                console.log("District match:", districtMatch);
+
+                if (districtMatch) {
+                  setSelectedDistrict(districtMatch);
+                } else {
+                  console.log("No match found. Trying fuzzy search...");
+                }
+              }, 1000);
+            }
           }}
         />
 

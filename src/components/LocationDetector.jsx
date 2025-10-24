@@ -24,26 +24,16 @@ const LocationDetector = ({ onLocationDetected, lang = "en" }) => {
 
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
-            {
-              headers: {
-                "User-Agent": "mgnrega-tracker-app/1.0 (yaswanth@example.com)",
-              },
-            }
+            `https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}`
           );
 
           const data = await response.json();
-          const state =
-            data.address.state ||
-            data.address.region ||
-            data.address.state_name;
+          console.log("Full location data:", data);
 
-          const district =
-            data.address.state_district ||
-            data.address.county ||
-            data.address.suburb ||
-            data.address.city_district ||
-            data.address.city;
+          const state = data.address?.state;
+          const district = data.address?.state_district || data.address?.county;
+
+          console.log("Detected - State:", state, "District:", district);
 
           if (state && district) {
             onLocationDetected({
@@ -57,6 +47,7 @@ const LocationDetector = ({ onLocationDetected, lang = "en" }) => {
             );
           }
         } catch (err) {
+          console.error("Location error:", err);
           setError(
             Translations[lang]["location_failed"] || "Failed to detect location"
           );

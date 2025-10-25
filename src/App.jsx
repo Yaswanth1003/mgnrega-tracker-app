@@ -113,7 +113,7 @@ function App() {
         >
           <BarChart3 size={22} color="#00e6b8" />
           <span className="nav-title">
-            {Translations[lang]?.dashboard_title || "MGNREGA Dashboard"}
+            {Translations[lang]?.dashboard_title || "Our Voice · Our Rights"}
           </span>
         </div>
 
@@ -124,6 +124,9 @@ function App() {
             gap: "6px",
           }}
         >
+          <div class="lang1">
+            <p>Lang / भाषा : </p>
+          </div>
           <select
             id="langSelect"
             value={lang}
@@ -194,10 +197,17 @@ function App() {
 
         <style>
           {`
+          .lang1{
+          text-align:center;
+          }
             @media (max-width: 640px) {
               .nav-title {
                 display: none;
               }
+                .lang1{
+                display:none;
+                }
+
             }
           `}
         </style>
@@ -213,8 +223,13 @@ function App() {
         }}
       >
         <h1 style={{ margin: 0, fontSize: "42px", fontWeight: "700" }}>
-          {Translations[lang]?.welcome_msg || "Welcome to MGNREGA Tracker"}
+          {Translations[lang]?.welcome_msg ||
+            "Welcome to Our Voice · Our Rights"}
         </h1>
+        <p style={{ marginTop: "12px", fontSize: "18px", opacity: 0.9 }}>
+          {Translations[lang]?.explore_data1 ||
+            "MGNREGA District Performance Tracker"}
+        </p>
         <p style={{ marginTop: "12px", fontSize: "18px", opacity: 0.9 }}>
           {Translations[lang]?.explore_data ||
             "Explore real-time employment and development data across India"}
